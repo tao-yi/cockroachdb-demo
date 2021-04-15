@@ -1,0 +1,38 @@
+version: "3.9"
+
+networks:
+  roachnet:
+
+volumes:
+  roach1:
+  roach2:
+  roach3:
+
+services:
+  roach1:
+    image: cockroachdb/cockroach:v20.2.7
+    hostname: roach1
+    networks:
+      - roachnet
+    ports:
+      - 26257:26257
+      - 8088:8080
+    volumes:
+      - roach1:/cockroach/cockroach-data
+    command: start --insecure --join=roach1,roach2,roach3
+  roach2:
+    image: cockroachdb/cockroach:v20.2.7
+    hostname: roach2
+    networks:
+      - roachnet
+    volumes:
+      - roach2:/cockroach/cockroach-data
+    command: start --insecure --join=roach1,roach2,roach3
+  roach3:
+    image: cockroachdb/cockroach:v20.2.7
+    hostname: roach3
+    networks:
+      - roachnet
+    volumes:
+      - roach3:/cockroach/cockroach-data
+    command: start --insecure --join=roach1,roach2,roach3
